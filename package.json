@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@tensorflow/tfjs-node": "^1.2.9",
+    "body-parser": "^1.19.0",
+    "canvas": "^2.6.0",
+    "express": "^4.17.1",
+    "face-api.js": "^0.21.0"
+  },
+  "name": "face-detection-authentication",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "WinstonMarvel <winston@winstonmarvel.com>",
+  "license": "MIT"
+}
