@@ -1,50 +1,17 @@
-const canvas = require('canvas');
-import * as express from 'express';
+import '@tensorflow/tfjs-node';
 import * as faceapi from 'face-api.js';
-
-const { Canvas, Image, ImageData } = canvas;
-
-faceapi.env.monkeyPatch({ Canvas, Image, ImageData });
+import { canvas } from './env';
+import * as express from 'express';
+import * as bodyParser from 'body-parser';
+import { router } from './routes';
 
 const app = express();
 
-const REFERENCE_IMG = './images/ref.jpg';
-const QUERY_IMG = './images/query.jpg';
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 
-
-app.get('/', async (req, res) => {
-    const referenceImage = await canvas.loadImage(REFERENCE_IMG)
-    const queryImage = await canvas.loadImage(QUERY_IMG)
-
-      const resultsRef = await faceapi.detectSingleFace(referenceImage)
-    .withFaceLandmarks()
-    .withFaceDescriptor()
-
-    const resultsQuery = await faceapi.detectSingleFace(queryImage)
-        .withFaceLandmarks()
-        .withFaceDescriptor()
-
-    const maxDescriptorDistance = 0.6
-    const faceMatcher = new faceapi.FaceMatcher(resultsRef)
-    const bestMatch = faceMatcher.findBestMatch(resultsQuery.descriptor)
- 
-    if(bestMatch.distance > maxDescriptorDistance){
-        res.status(400).json({
-            sucess: false,
-            result: `Did Not Match: ${bestMatch.distance}`
-        })
-    }
-    else{
-        res.status(200).json({
-            sucess: true,
-            result: `Found Match: ${bestMatch.distance}`
-        })
-    }
-});
-
-
-
+app.use('/', router);
 
 (async function(){
     const MODEL_URL = './assets/weights';
